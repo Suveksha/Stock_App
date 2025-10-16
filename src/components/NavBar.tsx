@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Login from "./Login";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/authSlice";
@@ -19,6 +19,9 @@ export default function NavBar() {
 
   const user = useSelector((state: any) => state.auth.user);
 
+  useEffect(()=>{
+    console.log("USER",user)
+  })
   return (
     <div className="bg-white">
       <div className="flex w-full justify-between p-3 border-b border-b-gray-100 sm:hidden">
@@ -28,10 +31,9 @@ export default function NavBar() {
 
       <div className="hidden sm:flex justify-between border-b border-b-gray-100 w-full p-5">
         <div className="flex justify-between w-[35%]">
-          <div>Logo</div>
-          <div>Stocks</div>
-          <div>F&O</div>
-          <div>Mutual Funds</div>
+          <div onClick={()=>user && navigate("/feed")}>Dashboard</div>
+          <div onClick={()=>user && navigate("/stock/RELIANCE")}>StockCheck</div>
+          <div onClick={()=>user && navigate("/stock/all")}>All Stocks</div>
           <div>More</div>
         </div>
         <div className="flex justify-between w-[25%]">

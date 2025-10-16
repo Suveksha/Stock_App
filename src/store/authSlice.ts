@@ -1,4 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
+import Cookies from "js-cookie";
 
 const initialState={
   user:null
@@ -13,9 +14,15 @@ const initialState={
         },
         logout:(state)=>{
           state.user=null
-        }
+        },
+         restoreUser: (state) => {
+      const storedUser = Cookies.get("user");
+      if (storedUser) {
+        state.user = JSON.parse(storedUser);
+      }
+    }
       }
     })
 
-    export const {login,logout}=authSlice.actions
+    export const {login,logout, restoreUser}=authSlice.actions
     export default authSlice.reducer

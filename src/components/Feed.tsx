@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import CarouselComponent from "./Carousel";
+import CarouselComponent from "./reusable/Carousel";
 import api from "../api/api";
+import DisplayCard from "./reusable/DisplayCard";
 
 
 export default function Feed() {
@@ -9,23 +10,27 @@ export default function Feed() {
   const [losers, setLosers] = useState([]);
 
   useEffect(()=>{
-    api.get("/stock/indices").then((res)=>{
+    api.get("/index/all").then((res)=>{
       console.log("INDICES",res.data)
       setIndices(res.data)
     })
 
-    api.get("/stock/trending").then((res)=>{
-      console.log("TRENDING",res.data)
-      setGainers(res.data.trending_stocks.top_gainers)
-      setLosers(res.data.trending_stocks.top_losers)
+    api.get("/stock/gainers").then((res)=>{
+      console.log("Gainers",res.data)
+      setGainers(res.data)
+    })
+
+    api.get("/stock/losers").then((res)=>{
+      console.log("Losers",res.data)
+      setLosers(res.data)
     })
   },[])
 
   return (
      <div>
-      <CarouselComponent title="Indices" data={indices} type="index" />
-      <CarouselComponent title="Top Gainers" data={gainers} type="gain" />
-      <CarouselComponent title="Top Losers" data={losers} type="loss" />
+      <CarouselComponent title="Indices" data={indices} />
+      <DisplayCard title="Top Gainers" data={gainers} type="gain" />
+      <DisplayCard title="Top Losers" data={losers} type="loss" />
     </div>
   )
 }
