@@ -28,7 +28,7 @@ export default function Feed() {
 
   return (
      <div>
-      <CarouselComponent title="Indices" data={indices} />
+      <CarouselComponent data={indices} />
       <DisplayCard title="Top Gainers" data={gainers} type="gain" />
       <DisplayCard title="Top Losers" data={losers} type="loss" />
     </div>

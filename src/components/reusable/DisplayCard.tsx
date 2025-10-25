@@ -17,6 +17,7 @@ type DisplayProps = {
     image?: string;
     company_name: string;
     percent_change: string;
+    symbol:string;
   }[];
 };
 
@@ -24,7 +25,7 @@ export default function DisplayCard({ title, type, data }: DisplayProps) {
   const navigate = useNavigate();
 
   return (
-    <Box sx={{ width: '90%', mx: 'auto', mt: 5 }}>
+    <Box sx={{ width: '100%', mx: 'auto', mt: 5 }}>
       {title && (
         <Typography variant="h5" fontWeight="bold" mb={2}>
           {title}
@@ -34,9 +35,9 @@ export default function DisplayCard({ title, type, data }: DisplayProps) {
       <Box sx={{ display: 'flex' }}>
         {data.slice(0, 3).map((item, i) => (
           <Box key={i} px={2}>
-            {i < 1 ? (
+            {i < 5 ? (
               <Card
-                onClick={() => navigate('/stock/' + item?.company_name)}
+                onClick={() => navigate('/stock/' + item?.symbol)}
                 sx={{
                   borderRadius: 3,
                   backgroundColor: type === 'gain' ? '#F0FFF0' : 'white',

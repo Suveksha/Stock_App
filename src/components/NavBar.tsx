@@ -23,21 +23,21 @@ export default function NavBar() {
     console.log("USER",user)
   })
   return (
-    <div className="bg-white">
-      <div className="flex w-full justify-between p-3 border-b border-b-gray-100 sm:hidden">
+    <div className="bg-gray-50 border-b-[2px] border-b-[#06402B]">
+      <div className="flex w-full justify-between p-3 sm:hidden">
         <div>Logo</div>
         <div>Menu</div>
       </div>
 
-      <div className="hidden sm:flex justify-between border-b border-b-gray-100 w-full p-5">
+      <div className="hidden sm:flex justify-between border-b border-b-gray-100 w-full p-5 font-semibold">
         <div className="flex justify-between w-[35%]">
           <div onClick={()=>user && navigate("/feed")}>Dashboard</div>
-          <div onClick={()=>user && navigate("/stock/RELIANCE")}>StockCheck</div>
-          <div onClick={()=>user && navigate("/stock/all")}>All Stocks</div>
-          <div>More</div>
+          <div onClick={()=>user && navigate("/stock/all")}>Stocks</div>
+          <div onClick={()=>user && navigate("/user/wallet")}>Wallet</div>
+          <div onClick={()=>user && navigate("/user/orders")}>Orders</div>
         </div>
-        <div className="flex justify-between w-[25%]">
-          <div>Search</div>
+        <div className="">
+          
           {!user ? (
             <div className="cursor-pointer" onClick={handleOpen}>
               Login/Sign up

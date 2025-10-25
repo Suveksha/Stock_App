@@ -1,9 +1,9 @@
 import Slider from "react-slick";
-import { Card, CardContent, Typography, Box } from "@mui/material";
+import { Card, CardContent, Box } from "@mui/material";
 
 
 type CarouselProps = {
-  title:string, data:{
+ data:{
     net_change: string;
     status: string;
     current_value: string;
@@ -14,7 +14,7 @@ type CarouselProps = {
     percent_change:string;
 }[] 
 }
-const CarouselComponent=({title, data}:CarouselProps)=>{
+const CarouselComponent=({ data}:CarouselProps)=>{
   const settings={
     infinite: true,
     speed: 1000,
@@ -29,13 +29,8 @@ const CarouselComponent=({title, data}:CarouselProps)=>{
   }
 
   return (
-    <Box sx={{ width: "90%", mx: "auto", mt: 5}}>
-      {title && (
-        <Typography variant="h5" fontWeight="bold" mb={2}>
-          {title}
-        </Typography>
-      )}
-
+    <Box sx={{ width: "100%", mx: "auto"}}>
+      
       <Slider {...settings}>
         {data.map((item, i) => (
           <Box key={i} px={2}>

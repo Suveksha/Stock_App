@@ -3,8 +3,11 @@ import { useParams } from "react-router-dom";
 import api from "../api/api";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { Button, Card, CardContent, Typography, CircularProgress } from "@mui/material";
+import { useSelector } from "react-redux";
+import OrderDialog from "./reusable/OrderDialog";
 
 type Stock={
+  "_id": string,
   "company_name": string,
     "symbol": string,
     "current_price": number,
@@ -29,6 +32,9 @@ export default function StockDetails() {
   const { symbol } = useParams();
   const [stock, setStock] = useState<Stock>();
   const [loading, setLoading] = useState(true);
+  const user=useSelector((state:any)=>state.auth.user)
+  const [type, setType]=useState("");
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     api.post("/stock/get",{symbol})
@@ -43,11 +49,24 @@ export default function StockDetails() {
       });
   }, [symbol]);
 
+  const createOrder=({quantity, type}:{quantity:number, type:string})=>{
+    console.log("Type",type)
+    api.post("/order/create",{
+      user_id:user.id,
+      stock_id:stock?._id,
+      type,
+      quantity,
+      price_at_order:stock?.current_price
+    }).then((res)=>{
+      console.log("Order",res.data)
+    })
+  }
+
   if (loading) return <div className="flex justify-center mt-20"><CircularProgress /></div>;
   if (!stock) return <div className="text-center mt-10 text-red-600">Stock not found</div>;
 
   return (
-    <div className="p-8">
+    <div className="">
       <Card className="max-w-5xl mx-auto shadow-xl rounded-2xl p-6">
         <div className="flex items-center gap-6">
           <img src={stock.image} alt={stock.company_name} className="w-16 h-16 rounded-full border" />
@@ -68,8 +87,14 @@ export default function StockDetails() {
           </div>
 
           <div className="flex gap-4">
-            <Button variant="contained" color="success" size="large">Buy</Button>
-            <Button variant="outlined" color="error" size="large">Sell</Button>
+            <Button variant="contained" color="success" size="large" onClick={() =>{
+              setType("BUY")
+              setOpen(true)
+            } }>Buy</Button>
+            <Button variant="outlined" color="error" size="large" onClick={() =>{
+              setType("SELL")
+              setOpen(true)
+            } }>Sell</Button>
           </div>
         </div>
 
@@ -92,6 +117,16 @@ export default function StockDetails() {
           </Typography>
         </CardContent>
       </Card>
+
+        <OrderDialog
+              data={{
+                currentPrice:stock.current_price,
+                type,
+              }}
+              open={open}
+              onClose={() => setOpen(false)}
+              onConfirm={createOrder}
+            />
     </div>
   );
 }

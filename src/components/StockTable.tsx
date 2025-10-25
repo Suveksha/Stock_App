@@ -1,19 +1,35 @@
-import { useEffect, useState } from "react"
-import api from "../api/api"
-import Table from "./reusable/Table"
-
+import { useEffect, useState } from "react";
+import api from "../api/api";
+import MainTable from "./reusable/MainTable";
+interface TableHeader {
+  id: string;
+  label: string;
+}
 export default function StockTable() {
-  const [stocksData,setStocksData]=useState([])
-  useEffect(()=>{
-    api.get("/stock/all").then((res)=>{
-      console.log("Stocks",res.data)
-      setStocksData(res.data)
-    })
-  },[])
+  const stockHeaders: TableHeader[] = [
+    { id: "company_name", label: "Company Name" },
+    { id: "current_price", label: "Current Price (₹)" },
+    { id: "percent_change", label: "% Change" },
+  ];
+
+  const [stocksData, setStocksData] = useState([]);
+  useEffect(() => {
+    api.get("/stock/all").then((res) => {
+      console.log("Stocks", res.data);
+      setStocksData(res.data);
+    });
+  }, []);
   return (
-     <div className="max-w-5xl mx-auto mt-10">
-      <h1 className="text-2xl font-semibold mb-4 text-center">📈 Indian Stocks</h1>
-      <Table data={stocksData} />
+    <div className="">
+      <h1 className="text-2xl font-semibold  text-center">
+       Stocks
+      </h1>
+      <MainTable
+        tableHeaders={stockHeaders}
+        tableData={stocksData}
+        filterKeys={["company_name"]}
+        type="STOCK"
+      />
     </div>
-  )
+  );
 }

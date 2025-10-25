@@ -1,6 +1,6 @@
 import { Button, Dialog, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
-import { set, useForm, type SubmitHandler } from "react-hook-form";
+import { useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import api from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -58,8 +58,8 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, handleClose }) => {
            api.post("/user/signup", data).then((res:any)=>{
         if(res.status===201){
           console.log("Change Page")
-          navigate("/feed")
           dispatch(login({user:res.data.user}))
+          navigate("/feed")
           handleClose()          
         }
       });
@@ -68,57 +68,6 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, handleClose }) => {
     });
   };
 
-  //  if (res.data.user) {
-  //         api.post("/user/login", data).then((res:any)=>{
-  //       if(res.status===200){
-  //         console.log("Change Page")
-  //         dispatch(login({user:res.data.user}))
-  //         navigate("/feed")
-  //         handleClose()
-  //       }
-  //     });
-  //       setUser(res.data.user);
-  //       setUserExist(true);
-       
-  //     }
-  //     else{
-  //       setUserExist(false);
-  //       setUser({})
-  //        api.post("/user/signup", data).then((res:any)=>{
-  //       if(res.status===201){
-  //         console.log("Change Page")
-  //         navigate("/feed")
-  //         dispatch(login({user:res.data.user}))
-  //         handleClose()          
-  //       }
-  //     });
-  //     }
-  // useEffect(() => {
-  //   if(isSubmitted){
-  //   if (userExist) {
-  //     console.log("LOG IN",formData);
-  //     api.post("/user/login", formData).then((res:any)=>{
-  //       if(res.status===200){
-  //         console.log("Change Page")
-  //         dispatch(login({user:res.data.user}))
-  //         handleClose()
-  //         navigate("/feed")
-  //       }
-  //     });
-  //   } else {
-  //     console.log("SIGN UP",formData);
-  //     api.post("/user/signup", formData).then((res:any)=>{
-  //       if(res.status===201){
-  //         console.log("Change Page")
-  //         navigate("/feed")
-  //         handleClose()
-  //         dispatch(login({user:res.data.user}))
-          
-  //       }
-  //     });
-  //   }
-  // }
-  // }, [userExist, formData, navigate, dispatch, handleClose, isSubmitted]);
 
   return (
     <Dialog
@@ -341,75 +290,3 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, handleClose }) => {
   );
 };
 export default LoginDialog;
-
-//  <div className="text-3xl font-bold mt-10 text-gray-400">
-//             {userExist ? "Welcome Back "+user?.name : "Welcome to Grow"}
-//           </div>
-//           {/* <div className={userExist?"hidden":"visible w-full"}>
-//             <div className="flex items-center">
-//               <div className="flex-grow border-t border-gray-200 ml-5"></div>
-//               <span className="px-4 text-gray-600 mr-8 ml-8">Or</span>
-//               <div className="flex-grow border-t border-gray-200 mr-5"></div>
-//             </div>
-//           </div> */}
-//           <div
-//             className={
-//               userExist
-//                 ? "w-full flex flex-col justify-center mt-10"
-//                 : "w-full flex flex-col justify-center"
-//             }
-//           >
-//             <TextField
-//               id="email"
-//               label="Your Email Address"
-//               variant="standard"
-//               sx={{
-//                 "& .MuiInputLabel-root.Mui-focused": {
-//                   color: "green", // label turns green on focus
-//                 },
-//                 "& .MuiInput-underline:after": {
-//                   borderBottomColor: "green", // remove the blue underline
-//                 },
-//                 width: "100%",
-//               }}
-//               {...register("email", { required: true })}
-//             />
-//             {errors.email && (
-//               <span className="text-red-500 text-[12px]">
-//                 Email is required
-//               </span>
-//             )}
-//           </div>
-//           <div
-//             className={
-//               userExist
-//                 ? "w-full flex flex-col justify-center mt-10"
-//                 : "hidden"
-//             }
-//           >
-//             <TextField
-//               id="password"
-//               label="Enter Password"
-//               variant="standard"
-//               sx={{
-//                 "& .MuiInputLabel-root.Mui-focused": {
-//                   color: "green", // label turns green on focus
-//                 },
-//                 "& .MuiInput-underline:after": {
-//                   borderBottomColor: "green", // remove the blue underline
-//                 },
-//                 width: "100%",
-//               }}
-//               {...register("password", {
-//                 required: userExist ? true : false,
-//               })}
-//             />
-//             <div className="text-green-400 font-semibold relative left-45 top-10 cursor-pointer">
-//               Forgot Password?
-//             </div>
-//             {errors.password && (
-//               <span className="text-red-500 text-[12px]">
-//                 Password is required
-//               </span>
-//             )}
-//           </div>
