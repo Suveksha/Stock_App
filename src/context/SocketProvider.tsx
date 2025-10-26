@@ -29,7 +29,7 @@ export default function SocketProvider({userId, children}:{userId:string,childre
 
 
   return (
-    <SocketContext.Provider value={socket && null}>
+    <SocketContext.Provider value={socket}>
       {children}
     </SocketContext.Provider>
   )
