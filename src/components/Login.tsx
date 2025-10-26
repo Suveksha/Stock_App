@@ -19,10 +19,20 @@ type LoginFormData = {
   phone: string;
 };
 
+interface UserData{
+  email: string;
+  firstName:string;
+  lastName:string;
+  phone:string;
+  balance:number;
+  quantity:number;
+  watchlist:string[];
+}
+
 const LoginDialog: React.FC<LoginDialogProps> = ({ open, handleClose }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState<UserData>();
   const {
     register,
     handleSubmit,
@@ -53,7 +63,6 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, handleClose }) => {
       else
       {
         setUserExist(false);
-        setUser({})
         if(data.password){
            api.post("/user/signup", data).then((res:any)=>{
         if(res.status===201){

@@ -1,11 +1,11 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { io, Socket } from "socket.io-client";
 
-const SocketContext=createContext(null);
+const SocketContext=createContext<Socket | null>(null);
 
 export default function SocketProvider({userId, children}:{userId:string,children:React.ReactNode}) {
 
-  const [socket, setSocket]=useState<Socket>();
+  const [socket, setSocket]=useState<Socket|null>(null);
   
   useEffect(()=>{
     const newSocket:Socket=io("http://localhost:3000");
@@ -29,10 +29,10 @@ export default function SocketProvider({userId, children}:{userId:string,childre
 
 
   return (
-    <SocketContext.Provider value={socket}>
+    <SocketContext.Provider value={socket && null}>
       {children}
     </SocketContext.Provider>
   )
 }
 
-export const useSocket = () => useContext(SocketContext);
+export const useSocket = () => useContext(SocketContext) as Socket;
