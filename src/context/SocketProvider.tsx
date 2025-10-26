@@ -8,7 +8,7 @@ export default function SocketProvider({userId, children}:{userId:string,childre
   const [socket, setSocket]=useState<Socket|null>(null);
   
   useEffect(()=>{
-    const newSocket:Socket=io("http://localhost:3000");
+    const newSocket:Socket=io("/socket");
     setSocket(newSocket)
 
     if(userId)
