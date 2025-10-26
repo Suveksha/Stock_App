@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import NewTable from "./reusable/MainTable";
+import MainTable from "./reusable/MainTable";
 import api from "../api/api";
 import { useSelector } from "react-redux";
 interface TableHeader {
@@ -29,10 +29,13 @@ export default function Orders() {
     });
   }, [user.id]);
   return (
-    <NewTable
+    <div className="pr-10 pl-10 pt-5 pb-5 ">
+      <MainTable
       tableData={orders || []}
       tableHeaders={orderHeaders}
       filterKeys={orders ? ["company_name", "type", "status"] : []}
-    ></NewTable>  
+      title="Orders"
+    ></MainTable>  
+    </div>
   );
 }

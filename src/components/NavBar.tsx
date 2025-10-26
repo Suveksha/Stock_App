@@ -4,12 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
+import { Typography } from "@mui/material";
 
 export default function NavBar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleLogout = () => {
     api.post("/user/logout");
@@ -19,11 +19,11 @@ export default function NavBar() {
 
   const user = useSelector((state: any) => state.auth.user);
 
-  useEffect(()=>{
-    console.log("USER",user)
-  })
+  useEffect(() => {
+    console.log("USER", user);
+  });
   return (
-    <div className="bg-gray-50 border-b-[2px] border-b-[#06402B]">
+    <div className="bg-white cursor-default text-[#06402B]">
       <div className="flex w-full justify-between p-3 sm:hidden">
         <div>Logo</div>
         <div>Menu</div>
@@ -31,23 +31,65 @@ export default function NavBar() {
 
       <div className="hidden sm:flex justify-between border-b border-b-gray-100 w-full p-5 font-semibold">
         <div className="flex justify-between w-[35%]">
-          <div onClick={()=>user && navigate("/feed")}>Dashboard</div>
-          <div onClick={()=>user && navigate("/stock/all")}>Stocks</div>
-          <div onClick={()=>user && navigate("/user/wallet")}>Wallet</div>
-          <div onClick={()=>user && navigate("/user/orders")}>Orders</div>
+          <Typography
+            onClick={() => user && navigate("/feed")}
+            sx={{
+              "&:hover": { color: "#0cba7a" },
+              fontWeight: 500,
+            }}
+          >
+            Dashboard
+          </Typography>
+
+          <Typography
+            onClick={() => user && navigate("/stock/all")}
+            sx={{
+              "&:hover": { color: "#0cba7a" },
+              fontWeight: 500,
+            }}
+          >
+            Stocks
+          </Typography>
+
+          <Typography
+            onClick={() => user && navigate("/user/wallet")}
+            sx={{
+              "&:hover": { color: "#0cba7a" },
+              fontWeight: 500,
+            }}
+          >
+            Wallet
+          </Typography>
+
+          <Typography
+            onClick={() => user && navigate("/user/orders")}
+            sx={{
+              "&:hover": { color: "#0cba7a" },
+              fontWeight: 500,
+            }}
+          >
+            Orders
+          </Typography>
         </div>
-        <div className="">
+        <Typography
+          onClick={handleLogout}
+          sx={{
+            "&:hover": { color: "red" },
+            fontWeight: 500,
+          }}
+        >
+          Logout
+        </Typography>
+        {/* <div>
           
           {!user ? (
-            <div className="cursor-pointer" onClick={handleOpen}>
+            <div onClick={handleOpen}>
               Login/Sign up
             </div>
           ) : (
-            <div className="cursor-pointer" onClick={handleLogout}>
-              Logout
-            </div>
+            
           )}
-        </div>
+        </div> */}
       </div>
       <Login open={open} handleClose={handleClose} />
     </div>

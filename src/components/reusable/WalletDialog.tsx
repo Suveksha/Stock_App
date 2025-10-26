@@ -42,15 +42,41 @@ export default function WalletDialog({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>
-        {" "}
-        <span>{data.type == "add" ? "Add" : "Withdraw"}</span> Balance
+   <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="xs"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: 3,
+          background: "linear-gradient(145deg, #ffffff, #f5f8f6)",
+          boxShadow: "0px 6px 20px rgba(0,0,0,0.08)",
+          p: 1,
+        },
+      }}
+    >
+      {/* Title */}
+      <DialogTitle
+        sx={{
+          fontWeight: 600,
+          color: "#06402B",
+          textAlign: "center",
+          fontSize: "1.25rem",
+        }}
+      >
+        {data.type === "add" ? "Add" : "Withdraw"} Balance
       </DialogTitle>
-      <DialogContent>
-        <Box display="flex" flexDirection="column" gap={2} mt={1} mb={1}>
-          <Typography variant="body2" color="textSecondary">
-            Amount
+
+      {/* Content */}
+      <DialogContent sx={{ mt: 1 }}>
+        {/* Amount Input */}
+        <Box display="flex" flexDirection="column" gap={1.5} mb={3}>
+          <Typography
+            variant="subtitle2"
+            sx={{ color: "text.secondary", fontWeight: 500 }}
+          >
+            Enter Amount
           </Typography>
           <TextField
             label="Amount (₹)"
@@ -60,44 +86,95 @@ export default function WalletDialog({
             onChange={(e) => setAmount(Number(e.target.value))}
             error={!!error}
             helperText={error}
-            inputProps={{ min: 1 }}
+            inputProps={{
+              min: 1,
+              style: { fontSize: "0.95rem", MozAppearance: "textfield" },
+            }}
+            sx={{
+              "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+                WebkitAppearance: "none",
+                margin: 0,
+              },
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+                backgroundColor: "white",
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#16a34a",
+                },
+              },
+              "& .MuiInputLabel-root": {
+                color: "#666",
+                transform: "translate(14px, 14px) scale(1)", // Proper default placement
+              },
+              "& .MuiInputLabel-shrink": {
+                color: "#16a34a",
+                transform: "translate(14px, -9px) scale(0.8)", // Prevent half-cut issue
+              },
+            }}
           />
         </Box>
-        <Chip
-          label="UPI"
-          sx={{
-            "&:focus": {
-              backgroundColor: "#c7ea46",
-              fontColor: "white",
-            },
-          }}
-          onClick={() => setMode("UPI")}
-        />
-        <Chip label="Net Banking" sx={{
-            "&:focus": {
-              backgroundColor: "#c7ea46",
-              fontColor: "white",
-            },
-          }}
-          onClick={()=>setMode("Net Banking")}/>
-        <Chip label="Card" 
-        sx={{
-            "&:focus": {
-              backgroundColor: "#c7ea46",
-              fontColor: "white",
-            },
-          }}
-          onClick={()=>setMode("Card")}/>
+
+        {/* Mode Selection */}
+        <Box
+          display="flex"
+          justifyContent="center"
+          gap={1.5}
+          flexWrap="wrap"
+          mt={1}
+        >
+          {["UPI", "Net Banking", "Card"].map((option) => (
+            <Chip
+              key={option}
+              label={option}
+              onClick={() => setMode(option)}
+              variant={mode === option ? "filled" : "outlined"}
+              sx={{
+                px: 1,
+                fontWeight: 500,
+                color: mode === option ? "white" : "#06402B",
+                backgroundColor:
+                  mode === option ? "#16a34a" : "rgba(22,163,74,0.08)",
+                borderColor: mode === option ? "#16a34a" : "#cfd8dc",
+                "&:hover": {
+                  backgroundColor:
+                    mode === option ? "#138f48" : "rgba(22,163,74,0.15)",
+                },
+                transition: "all 0.2s ease-in-out",
+              }}
+            />
+          ))}
+        </Box>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="inherit">
+
+      {/* Actions */}
+      <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
+        <Button
+          onClick={onClose}
+          variant="outlined"
+          sx={{
+            textTransform: "none",
+            borderColor: "#ccc",
+            color: "#333",
+            "&:hover": {
+              borderColor: "#aaa",
+              backgroundColor: "#f5f5f5",
+            },
+          }}
+        >
           Cancel
         </Button>
+
         <Button
           variant="contained"
-          color="primary"
-          onClick={handleConfirm}
           disabled={!amount || Number(amount) <= 0}
+          onClick={handleConfirm}
+          sx={{
+            textTransform: "none",
+            backgroundColor: "#06402B",
+            "&:hover": {
+              backgroundColor: "#075c3d",
+            },
+          }}
         >
           Confirm
         </Button>

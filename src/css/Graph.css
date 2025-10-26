@@ -1,0 +1,67 @@
+.graph-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background: radial-gradient(circle at center, #f6fff6, #e6ffe6 60%, #d4fcd4);
+  /* border-radius: 20px; */
+  box-shadow: 0 0 25px rgba(0, 255, 100, 0.2);
+}
+
+.graph {
+  /* position: relative; */
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 25px;
+  height: 480px;
+  width: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+  /* background: linear-gradient(180deg, #ffffff, #e9ffe9); */
+  box-shadow: inset 0 0 12px rgba(0, 255, 0, 0.1);
+  opacity: 0.8;
+}
+
+.bar {
+  width: 25px;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(180deg, #00ff99, #007a3d);
+  animation: bounce 3s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.3s);
+  transform-origin: bottom;
+  box-shadow: 0 0 10px rgba(0, 255, 128, 0.4);
+  height: 0;
+  transition: height 2s ease-in;
+}
+
+@keyframes bounce {
+  0% {
+    height: calc(var(--height) * 0.6);
+  }
+  50% {
+    height: var(--height);
+  }
+  100% {
+    height: calc(var(--height) * 0.6);
+  }
+}
+
+.overlay-text {
+  /* position: absolute; */
+  padding-top:35px;
+  /* inset: 0; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: bold;
+  font-family: "Poppins", sans-serif;
+  color: #004d27;
+  /* text-shadow: 0 2px 3px rgba(0, 255, 0, 0.4); */
+  /* letter-spacing: 0.5px; */
+  z-index: 1;
+  pointer-events: none;
+}

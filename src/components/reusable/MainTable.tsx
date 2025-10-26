@@ -1,8 +1,21 @@
 import { useState, useMemo } from "react";
 import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, Select, MenuItem, FormControl, InputLabel, TableSortLabel,
-  TablePagination, Typography, Box, TextField
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  TableSortLabel,
+  TablePagination,
+  Typography,
+  Box,
+  TextField,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -21,17 +34,24 @@ interface MainTableProps {
   tableHeaders: TableHeader[];
   tableData: TableData[];
   filterKeys?: string[];
-  type?:string;
+  type?: string;
+  title?: string;
 }
 
-export default function MainTable({ tableHeaders, tableData, type, filterKeys = [] }: MainTableProps) {
+export default function MainTable({
+  tableHeaders,
+  tableData,
+  type,
+  filterKeys = [],
+  title
+}: MainTableProps) {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>(tableHeaders[0]?.id || "");
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const navigate = useNavigate();
 
   // 🔹 Handle sorting
@@ -110,17 +130,51 @@ export default function MainTable({ tableHeaders, tableData, type, filterKeys = 
     text.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
   return (
-    <Paper sx={{ padding: 3, borderRadius: 3, boxShadow: "0 4px 20px rgba(0,0,0,0.05)" }}>
+    <Paper
+      sx={{
+        padding: 3,
+        borderRadius: 3,
+        boxShadow: "0 4px 5px rgba(0,0,0,0.25)",
+      }}
+    >
+      <Typography variant="h3" gutterBottom align="center">{title}</Typography>
       {/* Dynamic Filters */}
       {filterKeys.length > 0 && (
         <Box display="flex" flexWrap="wrap" gap={2} mb={2}>
           {filterKeys.map((key) => (
-            <FormControl key={key} sx={{ minWidth: 120 }}>
+            <FormControl
+              key={key}
+              sx={{
+                minWidth: 250,
+                "& .MuiInputLabel-root": {
+                  fontSize: "0.875rem",
+                  fontWeight: 500,
+                  color: "#6b7280", // gray by default
+                },
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  fontSize: "0.875rem",
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#16a34a", // green on focus
+                  },
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#16a34a", // green when focused
+                },
+              }}
+              size="small"
+            >
               <InputLabel>{formatLabel(key)}</InputLabel>
               <Select
                 value={filters[key] || ""}
                 onChange={(e) => handleFilterChange(key, e.target.value)}
                 label={formatLabel(key)}
+                sx={{
+                  "& .MuiSelect-select": {
+                    fontSize: "0.875rem",
+                    color: "#06402B", // selected text color
+                  },
+                }}
               >
                 <MenuItem value="">All</MenuItem>
                 {filterOptions[key].map((opt) => (
@@ -140,14 +194,85 @@ export default function MainTable({ tableHeaders, tableData, type, filterKeys = 
                 type="number"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
-                sx={{ width: 120 }}
+                size="small"
+                sx={{
+                  width: 120,
+                  "& .MuiInputLabel-root": {
+                    color: "#6b7280", // gray by default
+                    fontSize: "0.875rem",
+                    fontWeight: 500,
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "#16a34a", // green on focus
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 1,
+                    "& fieldset": {
+                      borderColor: "#d1d5db", // gray outline
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#16a34a", // green on hover
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#16a34a", // green on focus
+                    },
+                  },
+                  "& input": {
+                    fontSize: "0.875rem",
+                    color: "#06402B",
+                    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button":
+                      {
+                        WebkitAppearance: "none",
+                        margin: 0,
+                      },
+                    "&[type=number]": {
+                      MozAppearance: "textfield",
+                    },
+                  },
+                }}
               />
+
               <TextField
                 label="Max Price"
                 type="number"
                 value={maxPrice}
+                size="small"
                 onChange={(e) => setMaxPrice(e.target.value)}
-                sx={{ width: 120 }}
+                sx={{
+                  width: 120,
+                  "& .MuiInputLabel-root": {
+                    color: "#6b7280",
+                    fontSize: "0.875rem",
+                    fontWeight: 500,
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "#16a34a",
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 1,
+                    "& fieldset": {
+                      borderColor: "#d1d5db",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#16a34a",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#16a34a",
+                    },
+                  },
+                  "& input": {
+                    fontSize: "0.875rem",
+                    color: "#06402B",
+                    "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button":
+                      {
+                        WebkitAppearance: "none",
+                        margin: 0,
+                      },
+                    "&[type=number]": {
+                      MozAppearance: "textfield",
+                    },
+                  },
+                }}
               />
             </>
           )}
@@ -156,7 +281,12 @@ export default function MainTable({ tableHeaders, tableData, type, filterKeys = 
 
       {/* Table */}
       {sortedData.length === 0 ? (
-        <Typography variant="h6" textAlign="center" color="text.secondary" sx={{ padding: 4 }}>
+        <Typography
+          variant="h6"
+          textAlign="center"
+          color="text.secondary"
+          sx={{ padding: 4 }}
+        >
           No data found
         </Typography>
       ) : (
@@ -178,7 +308,12 @@ export default function MainTable({ tableHeaders, tableData, type, filterKeys = 
                         active={orderBy === col.id}
                         direction={orderBy === col.id ? order : "asc"}
                         onClick={() => handleSort(col.id)}
-                        sx={{ color: "white !important", "& .MuiTableSortLabel-icon": { color: "white !important" } }}
+                        sx={{
+                          color: "white !important",
+                          "& .MuiTableSortLabel-icon": {
+                            color: "white !important",
+                          },
+                        }}
                       >
                         {col.label}
                       </TableSortLabel>
@@ -195,7 +330,9 @@ export default function MainTable({ tableHeaders, tableData, type, filterKeys = 
                       backgroundColor: i % 2 === 0 ? "#f9f9f9" : "white",
                       "&:hover": { backgroundColor: "#e9f5ef" },
                     }}
-                    onClick={() => type==="STOCK" && navigate(`/stock/${row.symbol}`)}
+                    onClick={() =>
+                      type === "STOCK" && navigate(`/stock/${row.symbol}`)
+                    }
                   >
                     {tableHeaders.map((col) => (
                       <TableCell key={col.id}>

@@ -20,15 +20,13 @@ export default function StockTable() {
     });
   }, []);
   return (
-    <div className="">
-      <h1 className="text-2xl font-semibold  text-center">
-       Stocks
-      </h1>
+    <div className="pr-10 pl-10 pt-5">
       <MainTable
         tableHeaders={stockHeaders}
         tableData={stocksData}
         filterKeys={["company_name"]}
         type="STOCK"
+        title="Stocks"
       />
     </div>
   );

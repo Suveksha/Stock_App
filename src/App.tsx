@@ -27,7 +27,7 @@ const user = useSelector((state: any) => state.auth.user);
   },[user])
 
   return (
-    <div className='bg-[#d8e4bc] h-screen'>
+    <div>
     {user && <NavBar/>}
     <div>
       <SocketProvider userId={user?.id || ""}>  

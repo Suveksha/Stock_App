@@ -27,7 +27,7 @@ export default function Feed() {
   },[])
 
   return (
-     <div>
+     <div className="pr-10 pl-10 pt-5 pb-5 ">
       <CarouselComponent data={indices} />
       <DisplayCard title="Top Gainers" data={gainers} type="gain" />
       <DisplayCard title="Top Losers" data={losers} type="loss" />

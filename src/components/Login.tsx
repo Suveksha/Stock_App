@@ -5,7 +5,7 @@ import api from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../store/authSlice";
-
+import "../css/Graph.css";
 interface LoginDialogProps {
   open: boolean;
   handleClose: () => void;
@@ -19,20 +19,21 @@ type LoginFormData = {
   phone: string;
 };
 
-interface UserData{
+interface UserData {
   email: string;
-  firstName:string;
-  lastName:string;
-  phone:string;
-  balance:number;
-  quantity:number;
-  watchlist:string[];
+  firstName: string;
+  lastName: string;
+  phone: string;
+  balance: number;
+  quantity: number;
+  watchlist: string[];
 }
 
 const LoginDialog: React.FC<LoginDialogProps> = ({ open, handleClose }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [user, setUser] = useState<UserData>();
+  const [isChecking, setIsChecking] = useState(false);
   const {
     register,
     handleSubmit,
@@ -44,39 +45,39 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, handleClose }) => {
   const [userExist, setUserExist] = useState(false);
   const onSubmit: SubmitHandler<LoginFormData> = (data: LoginFormData) => {
     console.log(data);
+    setIsChecking(true);
     api.post("/user/checkuser", data).then((res: any) => {
-      if(res.data.user){
-        setUserExist(true)
-        setUser(res.data.user)
+      if (res.data.user) {
+        setUserExist(true);
+        setUser(res.data.user);
 
-        if(data.password){
-           api.post("/user/login", data).then((res:any)=>{
-        if(res.status===200){
-          console.log("Change Page")
-          dispatch(login({user:res.data.user}))
-          navigate("/feed")
-          handleClose()
+        if (data.password) {
+          api.post("/user/login", data).then((res: any) => {
+            if (res.status === 200) {
+              console.log("Change Page");
+              dispatch(login({ user: res.data.user }));
+              navigate("/feed");
+              handleClose();
+            }
+          });
         }
-      });
-        }
-      }
-      else
-      {
+      } else {
         setUserExist(false);
-        if(data.password){
-           api.post("/user/signup", data).then((res:any)=>{
-        if(res.status===201){
-          console.log("Change Page")
-          dispatch(login({user:res.data.user}))
-          navigate("/feed")
-          handleClose()          
-        }
-      });
+        if (data.password) {
+          api.post("/user/signup", data).then((res: any) => {
+            if (res.status === 201) {
+              console.log("Change Page");
+              dispatch(login({ user: res.data.user }));
+              navigate("/feed");
+              handleClose();
+            }
+          });
         }
       }
-    });
+    }).finally(() => setIsChecking(false));
   };
 
+  const heights = ["30%", "50%", "60%", "80%", "50%", "90%", "70%", "60%"];
 
   return (
     <Dialog
@@ -91,209 +92,169 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, handleClose }) => {
         },
       }}
     >
-      <div className="grid grid-cols-2 h-full">
-        <div className="bg-green-500 text-3xl font-bold text-white">
-          <div className=" flex justify-center bg-red-50">
-            <img src="dashboard_2.png" alt="chart" className="h-[500px]" />
+      <div className="grid grid-cols-2 overflow-hidden">
+        <div className="graph-container">
+          <div className="overlay-text">Simple &amp; Free Investing</div>
+
+          <div className="graph ">
+            {heights.map((h, i) => (
+              <div
+                key={i}
+                className="bar"
+                style={{ "--height": h, "--i": i + 1 } as React.CSSProperties}
+              ></div>
+            ))}
           </div>
-          <div className="p-1 text-center">Simple, Free Investing.</div>
         </div>
         <form
-          className="flex flex-col items-center mr-4 ml-4"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <div className="text-3xl font-bold mt-10 text-gray-400">
-            {userExist ? "Welcome Back " + user?.firstName : "Welcome to Grow"}
-          </div>
+  className="flex flex-col items-center gap-6 px-6 py-8 bg-white max-w-md mx-auto"
+  onSubmit={handleSubmit(onSubmit)}
+>
+  <div className="text-3xl font-extrabold mt-2 text-gray-700 text-center">
+    {userExist ? `Welcome Back, ${user?.firstName}` : "Welcome to Invest Guru"}
+  </div>
 
-          {isSubmitted ? (
-            userExist ? (
-              <div>
-                <TextField
-                  id="email"
-                  label={!user?.email?"Your Email Address":""}
-                  variant="standard"
-                  disabled={true}
-                  value={user?.email}
-                  sx={{
-                    "& .MuiInputLabel-root.Mui-focused": {
-                      color: "green", // label turns green on focus
-                    },
-                    "& .MuiInput-underline:after": {
-                      borderBottomColor: "green", // remove the blue underline
-                    },
-                    width: "100%",
-                  }}
-                  {...register("email", { required: false })}
-                />
-                {errors.email && (
-                  <span className="text-red-500 text-[12px]">
-                    Email is required
-                  </span>
-                )}
-                <TextField
-                  id="password"
-                  type="password"
-                  label="Enter Password"
-                  variant="standard"
-                  sx={{
-                    "& .MuiInputLabel-root.Mui-focused": {
-                      color: "green", // label turns green on focus
-                    },
-                    "& .MuiInput-underline:after": {
-                      borderBottomColor: "green", // remove the blue underline
-                    },
-                    width: "100%",
-                  }}
-                  {...register("password", {
-                    required: userExist ? true : false,
-                  })}
-                />
-                <div className="text-green-400 font-semibold relative left-45 top-10 cursor-pointer">
-                  Forgot Password?
-                </div>
-                {errors.password && (
-                  <span className="text-red-500 text-[12px]">
-                    Password is required
-                  </span>
-                )}
-              </div>
-            ) : (
-              <div>
-                <TextField
-                  id="firstName"
-                  label="First Name"
-                  variant="standard"
-                  sx={{
-                    "& .MuiInputLabel-root.Mui-focused": {
-                      color: "green", // label turns green on focus
-                    },
-                    "& .MuiInput-underline:after": {
-                      borderBottomColor: "green", // remove the blue underline
-                    },
-                    width: "100%",
-                  }}
-                  {...register("firstName", { required: true })}
-                />
-                <TextField
-                  id="lastName"
-                  label="Last Name"
-                  variant="standard"
-                  sx={{
-                    "& .MuiInputLabel-root.Mui-focused": {
-                      color: "green", // label turns green on focus
-                    },
-                    "& .MuiInput-underline:after": {
-                      borderBottomColor: "green", // remove the blue underline
-                    },
-                    width: "100%",
-                  }}
-                  {...register("lastName", { required: true })}
-                />
-                <TextField
-                  id="phone"
-                  label="Mobile No."
-                  variant="standard"
-                  type="number"
-                  sx={{
-                    "& .MuiInputLabel-root.Mui-focused": {
-                      color: "green", // label turns green on focus
-                    },
-                    "& .MuiInput-underline:after": {
-                      borderBottomColor: "green", // remove the blue underline
-                    },
-                    width: "100%",
-                    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-                      {
-                        WebkitAppearance: "none",
-                        margin: 0,
-                      },
-                    "& input[type=number]": {
-                      MozAppearance: "textfield",
-                    },
-                  }}
-                  {...register("phone", { required: true })}
-                />
-                <TextField
-                  id="email"
-                  value={user?.email}
-                  disabled={true}
-                  label="Your Email Address"
-                  variant="standard"
-                  sx={{
-                    "& .MuiInputLabel-root.Mui-focused": {
-                      color: "green", // label turns green on focus
-                    },
-                    "& .MuiInput-underline:after": {
-                      borderBottomColor: "green", // remove the blue underline
-                    },
-                    width: "100%",
-                  }}
-                  {...register("email", { required: true })}
-                />
-                {errors.email && (
-                  <span className="text-red-500 text-[12px]">
-                    Email is required
-                  </span>
-                )}
-                <TextField
-                  id="password"
-                  type="password"
-                  label="Enter Password"
-                  variant="standard"
-                  sx={{
-                    "& .MuiInputLabel-root.Mui-focused": {
-                      color: "green", // label turns green on focus
-                    },
-                    "& .MuiInput-underline:after": {
-                      borderBottomColor: "green", // remove the blue underline
-                    },
-                    width: "100%",
-                  }}
-                  {...register("password", {
-                    required: userExist ? true : false,
-                  })}
-                />
-              </div>
-            )
-          ) : (
-            <>
-              <TextField
-                id="email"
-                label="Your Email Address"
-                variant="standard"
-                sx={{
-                  "& .MuiInputLabel-root.Mui-focused": {
-                    color: "green", // label turns green on focus
-                  },
-                  "& .MuiInput-underline:after": {
-                    borderBottomColor: "green", // remove the blue underline
-                  },
-                  width: "100%",
-                }}
-                {...register("email", { required: true })}
-              />
-              {errors.email && (
-                <span className="text-red-500 text-[12px]">
-                  Email is required
-                </span>
-              )}
-            </>
-          )}
-          <Button
-            variant="contained"
-            sx={{
-              textTransform: "none",
-              backgroundColor: "#06402B",
-              marginTop: "7rem",
-              width: "100%",
-              ":focus": { outline: "none" },
-            }}
-            type="submit"
-          >
-            {userExist ? "Submit" : "Continue"}
-          </Button>
-        </form>
+  {!isChecking && isSubmitted ? (
+    userExist ? (
+      <div className="flex flex-col gap-4 w-full">
+        <TextField
+          id="email"
+          label={!user?.email ? "Your Email Address" : ""}
+          variant="standard"
+          disabled={true}
+          value={user?.email || ""}
+          sx={{
+            "& .MuiInputLabel-root.Mui-focused": { color: "#16a34a" },
+            "& .MuiInput-underline:after": { borderBottomColor: "#16a34a" },
+            width: "100%",
+          }}
+          {...register("email", { required: false })}
+        />
+        {errors.email && <span className="text-red-500 text-sm">Email is required</span>}
+
+        <TextField
+          id="password"
+          type="password"
+          label="Enter Password"
+          variant="standard"
+          sx={{
+            "& .MuiInputLabel-root.Mui-focused": { color: "#16a34a" },
+            "& .MuiInput-underline:after": { borderBottomColor: "#16a34a" },
+            width: "100%",
+          }}
+          {...register("password", { required: userExist ? true : false })}
+        />
+        {errors.password && <span className="text-red-500 text-sm">Password is required</span>}
+
+        {/* <div className="text-green-600 font-medium text-right cursor-pointer hover:underline">
+          Forgot Password?
+        </div> */}
+      </div>
+    ) : (
+      <div className="flex flex-col gap-4 w-full">
+        <TextField
+          id="firstName"
+          label="First Name"
+          variant="standard"
+          sx={{
+            "& .MuiInputLabel-root.Mui-focused": { color: "#16a34a" },
+            "& .MuiInput-underline:after": { borderBottomColor: "#16a34a" },
+            width: "100%",
+          }}
+          {...register("firstName", { required: true })}
+        />
+        <TextField
+          id="lastName"
+          label="Last Name"
+          variant="standard"
+          sx={{
+            "& .MuiInputLabel-root.Mui-focused": { color: "#16a34a" },
+            "& .MuiInput-underline:after": { borderBottomColor: "#16a34a" },
+            width: "100%",
+          }}
+          {...register("lastName", { required: true })}
+        />
+        <TextField
+          id="phone"
+          label="Mobile No."
+          variant="standard"
+          type="number"
+          sx={{
+            "& .MuiInputLabel-root.Mui-focused": { color: "#16a34a" },
+            "& .MuiInput-underline:after": { borderBottomColor: "#16a34a" },
+            width: "100%",
+            "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+              WebkitAppearance: "none",
+              margin: 0,
+            },
+            "& input[type=number]": { MozAppearance: "textfield" },
+          }}
+          {...register("phone", { required: true })}
+        />
+        <TextField
+          id="email"
+          value={user?.email || ""}
+          disabled={true}
+          label="Your Email Address"
+          variant="standard"
+          sx={{
+            "& .MuiInputLabel-root.Mui-focused": { color: "#16a34a" },
+            "& .MuiInput-underline:after": { borderBottomColor: "#16a34a" },
+            width: "100%",
+          }}
+          {...register("email", { required: true })}
+        />
+        {errors.email && <span className="text-red-500 text-sm">Email is required</span>}
+        <TextField
+          id="password"
+          type="password"
+          label="Enter Password"
+          variant="standard"
+          sx={{
+            "& .MuiInputLabel-root.Mui-focused": { color: "#16a34a" },
+            "& .MuiInput-underline:after": { borderBottomColor: "#16a34a" },
+            width: "100%",
+          }}
+          {...register("password", { required: userExist ? true : false })}
+        />
+      </div>
+    )
+  ) : (
+    <div className="flex flex-col gap-4 w-full">
+      <TextField
+        id="email"
+        label="Your Email Address"
+        variant="standard"
+        sx={{
+          "& .MuiInputLabel-root.Mui-focused": { color: "#16a34a" },
+          "& .MuiInput-underline:after": { borderBottomColor: "#16a34a" },
+          width: "100%",
+        }}
+        {...register("email", { required: true })}
+      />
+      {errors.email && <span className="text-red-500 text-sm">Email is required</span>}
+    </div>
+  )}
+
+  <Button
+    variant="contained"
+    sx={{
+      textTransform: "none",
+      backgroundColor: "#06402B",
+      marginTop: "3rem",
+      width: "100%",
+      paddingY: 1.5,
+      borderRadius: 2,
+      fontWeight: 600,
+      ":focus": { outline: "none" },
+      ":hover": { backgroundColor: "#0a5a36" },
+    }}
+    type="submit"
+  >
+    {userExist ? "Submit" : "Continue"}
+  </Button>
+</form>
+
       </div>
     </Dialog>
   );
