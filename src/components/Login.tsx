@@ -141,10 +141,16 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, handleClose }) => {
           }}
         >
           <div className="text-2xl md:text-3xl font-extrabold mt-2 text-gray-700 text-center leading-snug">
-            {userExist ? `Welcome Back, ${user?.firstName}` : "Welcome to "}
-            <span className="font-[cursive] text-[#046307] text-3xl md:text-4xl">
-              nVestGuru
-            </span>
+            {userExist ? (
+              <>Welcome Back, {user?.firstName}</>
+            ) : (
+              <>
+                Welcome to{" "}
+                <span className="font-[cursive] text-[#046307] text-3xl md:text-4xl">
+                  nVestGuru
+                </span>
+              </>
+            )}
           </div>
 
           {isChecking ? (

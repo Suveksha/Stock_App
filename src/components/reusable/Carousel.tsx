@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Slider from "react-slick";
 import { Card, CardContent, Box, Typography } from "@mui/material";
 import "slick-carousel/slick/slick.css";
@@ -17,35 +17,36 @@ type CarouselProps = {
   }[];
 };
 
-const CarouselComponent = ({ data }: CarouselProps) => {
-  const sliderRef = useRef<any>(null);
-  const [isClient, setIsClient] = useState(false);
+function getSlidesToShow(width:number) {
+  if (width >= 1440) return 4;
+  if (width >= 1280) return 3;
+  if (width >= 960) return 2;
+  if (width >= 768) return 2;
+  return 1;
+}
 
+const CarouselComponent = ({ data }: CarouselProps) => {
+
+  const [slidesToShow, setSlidesToShow] = useState(() => {
+    if (typeof window === "undefined") return 1;
+    return getSlidesToShow(window.innerWidth);
+  });
   useEffect(() => {
-    setIsClient(true);
-    setTimeout(() => {
-      sliderRef.current?.innerSlider?.onWindowResized?.();
-    }, 300);
+    const onResize = () => setSlidesToShow(getSlidesToShow(window.innerWidth));
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   const settings = {
     infinite: true,
     speed: 700,
-    slidesToShow: 4,
+    slidesToShow,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 3500,
     pauseOnHover: true,
     arrows: false,
-    responsive: [
-      { breakpoint: 1280, settings: { slidesToShow: 3 } },
-      { breakpoint: 960, settings: { slidesToShow: 2 } },
-      { breakpoint: 768, settings: { slidesToShow: 1 } }, // ✅ one slide for tablets/smaller
-      { breakpoint: 480, settings: { slidesToShow: 1 } }, // ✅ one slide for phones
-    ],
   };
-
-  if (!isClient) return null;
 
   return (
     <Box
@@ -53,11 +54,11 @@ const CarouselComponent = ({ data }: CarouselProps) => {
         width: "100%",
         mx: "auto",
         py: 3,
-        px: { xs: 1.5, sm: 2, md: 4 },
+        px: { xs: 1.5, sm: 2, md: 3 },
         overflow: "hidden",
       }}
     >
-      <Slider ref={sliderRef} {...settings}>
+      <Slider {...settings}>
         {data.map((item, i) => (
           <Box key={i} px={{ xs: 0.5, sm: 1 }}>
             <Card
@@ -72,7 +73,7 @@ const CarouselComponent = ({ data }: CarouselProps) => {
                 height: "100%",
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
                 "&:hover": {
-                  transform: "translateY(-4px)",
+                  transform: "translateY(2px)",
                   boxShadow: "0 6px 14px rgba(0,0,0,0.3)",
                 },
               }}

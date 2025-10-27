@@ -57,7 +57,6 @@ export default function NavBar() {
         >
           nVestGuru
         </Typography>
-
         <IconButton onClick={() => toggleDrawer(true)}>
           <MenuIcon sx={{ color: "#06402B" }} />
         </IconButton>

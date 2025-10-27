@@ -228,7 +228,10 @@ export default function MainTable({
                 size="small"
                 sx={{
                   width: isMobile ? "45%" : 100,
-                  "& .MuiInputBase-input": { fontSize: "0.8rem" },
+                  "& .MuiInputBase-input": { fontSize: "0.8rem",cursor:"pointer" },
+                   "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#16a34a",
+                },
                 }}
               />
               <TextField
@@ -239,7 +242,10 @@ export default function MainTable({
                 size="small"
                 sx={{
                   width: isMobile ? "45%" : 100,
-                  "& .MuiInputBase-input": { fontSize: "0.8rem" },
+                  "& .MuiInputBase-input": { fontSize: "0.8rem", cursor:"pointer" },
+                   "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#16a34a",
+                },
                 }}
               />
             </Box>

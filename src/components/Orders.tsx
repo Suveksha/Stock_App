@@ -42,7 +42,7 @@ export default function Orders() {
       <MainTable
         tableData={orders || []}
         tableHeaders={orderHeaders}
-        filterKeys={orders ? ["company_name", "type", "status"] : []}
+        filterKeys={orders ? ["company_name", "order_type", "status"] : []}
         title="Orders"
       ></MainTable>
     </Box>

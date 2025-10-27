@@ -35,6 +35,10 @@ export default function WalletDialog({
       setError("Please enter a valid amount greater than 0");
       return;
     }
+    if (amount>=10000000) {
+      setError("Cannot add more than 10000000");
+      return;
+    }
     setError("");
     onConfirm({ amount: Number(amount), mode });
     onClose();
