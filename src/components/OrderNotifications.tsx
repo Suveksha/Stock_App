@@ -7,12 +7,12 @@ type Notification = {
   order_type: string;
   price_at_order: number;
   quantity: number;
-  stock_id:string;
-  user_id:string;
-  message:string;
-  order_id:string;
-  status:string;
-}
+  stock_id: string;
+  user_id: string;
+  message: string;
+  order_id: string;
+  status: string;
+};
 const OrderNotification = () => {
   const socket = useSocket();
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -20,7 +20,7 @@ const OrderNotification = () => {
   useEffect(() => {
     if (!socket) return;
 
-    const handleOrderUpdate = (data:any) => {
+    const handleOrderUpdate = (data: any) => {
       console.log("NewOrder", data);
       setNotifications((prev) => [...prev, data]);
     };
@@ -34,11 +34,11 @@ const OrderNotification = () => {
     };
   }, [socket]);
 
-  useEffect(()=>{
-    console.log("Notifications",notifications)
-  })
+  useEffect(() => {
+    console.log("Notifications", notifications);
+  });
 
-  const handleClose = (index:number) => {
+  const handleClose = (index: number) => {
     setNotifications((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -54,7 +54,9 @@ const OrderNotification = () => {
         >
           <Alert
             onClose={() => handleClose(index)}
-            severity={notification.order_type === "SELL" ? "warning" : "success"}
+            severity={
+              notification.order_type === "SELL" ? "warning" : "success"
+            }
             sx={{ width: "100%" }}
           >
             {notification.message ||

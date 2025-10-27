@@ -16,6 +16,7 @@ import {
   CardContent,
   Typography,
   CircularProgress,
+  useMediaQuery,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import OrderDialog from "./reusable/OrderDialog";
@@ -51,11 +52,12 @@ export default function StockDetails() {
   const [type, setType] = useState("");
   const [open, setOpen] = useState(false);
 
+  const isSmallScreen = useMediaQuery("(max-width: 768px)");
+
   useEffect(() => {
     api
       .post("/stock/get", { symbol })
       .then((res) => {
-        console.log("Stock", res.data);
         setStock(res.data);
         setLoading(false);
       })
@@ -72,18 +74,13 @@ export default function StockDetails() {
     quantity: number;
     type: string;
   }) => {
-    console.log("Type", type);
-    api
-      .post("/order/create", {
-        user_id: user.id,
-        stock_id: stock?._id,
-        type,
-        quantity,
-        price_at_order: stock?.current_price,
-      })
-      .then((res) => {
-        console.log("Order", res.data);
-      });
+    api.post("/order/create", {
+      user_id: user.id,
+      stock_id: stock?._id,
+      type,
+      quantity,
+      price_at_order: stock?.current_price,
+    });
   };
 
   if (loading)
@@ -98,36 +95,44 @@ export default function StockDetails() {
     );
 
   return (
-    <div className="pr-10 pl-10 pt-5 pb-5">
-      <Card className="max-w-5xl mx-auto shadow-xl rounded-2xl p-6">
-        <div className="flex items-center gap-6">
+    <div className="px-4 sm:px-10 pt-5 pb-5">
+      <Card className="max-w-5xl mx-auto shadow-xl rounded-2xl p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
           <img
             src={stock.image}
             alt={stock.company_name}
-            className="w-16 h-16 rounded-full border"
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border"
           />
-          <div>
-            <Typography variant="h4" fontWeight={600}>
+          <div className="text-center sm:text-left">
+            <Typography variant="h5" fontWeight={600}>
               {stock.company_name}
             </Typography>
             <Typography color="text.secondary">{stock.symbol}</Typography>
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-between">
-          <div>
-            <Typography variant="h5" color="primary" fontWeight={600}>
+        <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-center sm:text-left">
+            <Typography
+              variant={isSmallScreen ? "h6" : "h5"}
+              color="primary"
+              fontWeight={600}
+            >
               ₹{stock.current_price}
             </Typography>
-            <Typography color={stock.percent_change >= 0 ? "green" : "red"}>
+            <Typography
+              color={stock.percent_change >= 0 ? "green" : "red"}
+              fontSize={isSmallScreen ? "0.9rem" : "1rem"}
+            >
               {stock.percent_change >= 0 ? "▲" : "▼"} {stock.percent_change}% (
               {stock.net_change})
             </Typography>
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex gap-3 sm:gap-4">
             <Button
               variant="contained"
+              size={isSmallScreen ? "small" : "medium"}
               sx={{
                 background: "linear-gradient(135deg, #06402B 0%, #0a5a36 100%)",
                 "&:hover": {
@@ -135,8 +140,8 @@ export default function StockDetails() {
                     "linear-gradient(135deg, #075c3d 0%, #0b7a4a 100%)",
                   transform: "translateY(-1px)",
                 },
-                px: 4,
-                py: 1.5,
+                px: isSmallScreen ? 2 : 4,
+                py: isSmallScreen ? 1 : 1.5,
                 borderRadius: 3,
                 fontWeight: 600,
                 textTransform: "none",
@@ -152,6 +157,7 @@ export default function StockDetails() {
             </Button>
             <Button
               variant="contained"
+              size={isSmallScreen ? "small" : "medium"}
               sx={{
                 background: "linear-gradient(135deg, #BF0A30 0%, #a7092a 100%)",
                 "&:hover": {
@@ -159,8 +165,8 @@ export default function StockDetails() {
                     "linear-gradient(135deg, #d3123a 0%, #b50d30 100%)",
                   transform: "translateY(-1px)",
                 },
-                px: 4,
-                py: 1.5,
+                px: isSmallScreen ? 2 : 4,
+                py: isSmallScreen ? 1 : 1.5,
                 borderRadius: 3,
                 fontWeight: 600,
                 textTransform: "none",
@@ -177,11 +183,11 @@ export default function StockDetails() {
           </div>
         </div>
 
-        <div className="mt-8">
+        <div className={`mt-8 ${isSmallScreen ? "h-[400px]" : "h-[300px]"}`}>
           <Typography variant="h6" mb={2}>
             Historical Performance
           </Typography>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height="100%">
             <LineChart data={stock.historical_data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -206,7 +212,14 @@ export default function StockDetails() {
         </div>
 
         <CardContent>
-          <Typography variant="body1" mt={4}>
+          <Typography
+            variant="body1"
+            mt={4}
+            sx={{
+              fontSize: isSmallScreen ? "0.95rem" : "1rem",
+              textAlign: isSmallScreen ? "justify" : "left",
+            }}
+          >
             {stock.desc}
           </Typography>
         </CardContent>

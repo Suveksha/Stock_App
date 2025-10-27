@@ -12,7 +12,7 @@ import {
 interface OrderDialogProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: ({quantity, type}:{quantity:number, type:string}) => void;
+  onConfirm: ({ quantity, type }: { quantity: number; type: string }) => void;
   data: {
     type: string;
     currentPrice: number;
@@ -25,23 +25,22 @@ export default function OrderDialog({
   onConfirm,
   data,
 }: OrderDialogProps) {
-
   const [quantity, setQuantity] = useState("");
   const [error, setError] = useState<string>("");
-  
-   const handleConfirm = () => {
+
+  const handleConfirm = () => {
     if (!quantity) {
       setError("Please enter a valid quantity greater than 0");
       return;
     }
     setError("");
-    onConfirm({quantity:Number(quantity), type:data.type});
+    onConfirm({ quantity: Number(quantity), type: data.type });
     onClose();
     setQuantity("");
   };
 
   return (
-     <Dialog
+    <Dialog
       open={open}
       onClose={onClose}
       maxWidth="xs"
@@ -59,12 +58,12 @@ export default function OrderDialog({
       <DialogTitle
         sx={{
           fontWeight: 600,
-          color:  "#06402B" ,
+          color: "#06402B",
           textAlign: "center",
           fontSize: "1.25rem",
         }}
       >
-        {data.type === "BUY"? "Buy" : "Sell"} Stocks
+        {data.type === "BUY" ? "Buy" : "Sell"} Stocks
       </DialogTitle>
 
       {/* Content */}
@@ -90,16 +89,16 @@ export default function OrderDialog({
               style: { fontSize: "0.95rem", MozAppearance: "textfield" },
             }}
             sx={{
-              "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-                WebkitAppearance: "none",
-                margin: 0,
-              },
+              "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
+                {
+                  WebkitAppearance: "none",
+                  margin: 0,
+                },
               "& .MuiOutlinedInput-root": {
                 borderRadius: 2,
                 backgroundColor: "white",
                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor:
-                     "#16a34a",
+                  borderColor: "#16a34a",
                 },
               },
               "& .MuiInputLabel-root": {
@@ -107,7 +106,7 @@ export default function OrderDialog({
                 transform: "translate(14px, 14px) scale(1)",
               },
               "& .MuiInputLabel-shrink": {
-                color:  "#16a34a",
+                color: "#16a34a",
                 transform: "translate(14px, -9px) scale(0.8)",
               },
             }}
@@ -129,7 +128,7 @@ export default function OrderDialog({
             <Typography
               variant="h6"
               sx={{
-                color:  "#16a34a" ,
+                color: "#16a34a",
                 fontWeight: 600,
               }}
             >
@@ -163,10 +162,9 @@ export default function OrderDialog({
           onClick={handleConfirm}
           sx={{
             textTransform: "none",
-            backgroundColor:  "#06402B" ,
+            backgroundColor: "#06402B",
             "&:hover": {
-              backgroundColor:
-                 "#075c3d" ,
+              backgroundColor: "#075c3d",
             },
           }}
         >
@@ -174,5 +172,5 @@ export default function OrderDialog({
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }

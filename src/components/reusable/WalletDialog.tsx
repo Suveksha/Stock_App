@@ -13,7 +13,7 @@ import {
 interface WalletDialogProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: ({amount, mode}:{amount:number, mode:string}) => void;
+  onConfirm: ({ amount, mode }: { amount: number; mode: string }) => void;
   data: {
     type: string;
     currentBalance: number;
@@ -36,13 +36,13 @@ export default function WalletDialog({
       return;
     }
     setError("");
-    onConfirm({amount:Number(amount), mode});
+    onConfirm({ amount: Number(amount), mode });
     onClose();
     setAmount("");
   };
 
   return (
-   <Dialog
+    <Dialog
       open={open}
       onClose={onClose}
       maxWidth="xs"
@@ -91,10 +91,11 @@ export default function WalletDialog({
               style: { fontSize: "0.95rem", MozAppearance: "textfield" },
             }}
             sx={{
-              "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-                WebkitAppearance: "none",
-                margin: 0,
-              },
+              "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
+                {
+                  WebkitAppearance: "none",
+                  margin: 0,
+                },
               "& .MuiOutlinedInput-root": {
                 borderRadius: 2,
                 backgroundColor: "white",

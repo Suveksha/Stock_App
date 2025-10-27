@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import MainTable from "./reusable/MainTable";
 import api from "../api/api";
 import { useSelector } from "react-redux";
+import { Box } from "@mui/material";
 interface TableHeader {
   id: string;
   label: string;
@@ -29,13 +30,21 @@ export default function Orders() {
     });
   }, [user.id]);
   return (
-    <div className="pr-10 pl-10 pt-5 pb-5 ">
+    <Box
+      sx={{
+        px: { xs: 1.5, sm: 3, md: 10 },
+        pt: { xs: 2, sm: 3, md: 5 },
+        width: "100%",
+        maxWidth: "100vw",
+        overflowX: "hidden",
+      }}
+    >
       <MainTable
-      tableData={orders || []}
-      tableHeaders={orderHeaders}
-      filterKeys={orders ? ["company_name", "type", "status"] : []}
-      title="Orders"
-    ></MainTable>  
-    </div>
+        tableData={orders || []}
+        tableHeaders={orderHeaders}
+        filterKeys={orders ? ["company_name", "type", "status"] : []}
+        title="Orders"
+      ></MainTable>
+    </Box>
   );
 }
