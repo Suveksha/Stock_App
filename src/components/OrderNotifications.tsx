@@ -17,6 +17,14 @@ const OrderNotification = () => {
   const socket = useSocket();
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
+  const getNotificationType = (status: string) => {
+    if(status==="SUCCESS")
+      return "success";
+    else if(status==="REJECTED")
+      return "error";
+    else 
+      return "info";
+  }
   useEffect(() => {
     if (!socket) return;
 
@@ -25,12 +33,19 @@ const OrderNotification = () => {
       setNotifications((prev) => [...prev, data]);
     };
 
-    socket.on("orderStatusUpdate", handleOrderUpdate);
-    socket.on("newOrder", handleOrderUpdate); // for admin
+    const handleBalanceUpdate=(data:any)=>{
+      console.log("Balance Update Event",data)
+       setNotifications((prev) => [...prev, data]);
+    }
+
+    // socket.on("orderStatusUpdate", handleOrderUpdate);
+    socket.on("new_order", handleOrderUpdate); 
+    socket.on("wallet", handleBalanceUpdate);
 
     return () => {
-      socket.off("orderStatusUpdate", handleOrderUpdate);
-      socket.off("newOrder", handleOrderUpdate);
+      // socket.off("orderStatusUpdate", handleOrderUpdate);
+      socket.off("new_order", handleOrderUpdate);
+      socket.off("wallet", handleBalanceUpdate);
     };
   }, [socket]);
 
@@ -54,13 +69,10 @@ const OrderNotification = () => {
         >
           <Alert
             onClose={() => handleClose(index)}
-            severity={
-              notification.order_type === "SELL" ? "warning" : "success"
-            }
-            sx={{ width: "100%" }}
+            severity={getNotificationType(notification.status)}
+            sx={{ width: "100%", fontSize: "1rem" }}
           >
-            {notification.message ||
-              `Order ${notification.order_id} is now ${notification.status}`}
+            {notification.message }
           </Alert>
         </Snackbar>
       ))}
