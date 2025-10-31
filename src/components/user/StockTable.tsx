@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../api/api";
-import MainTable from "./reusable/MainTable";
+import api from "../../api/api";
+import MainTable from "../reusable/MainTable";
 import { Box, CircularProgress } from "@mui/material";
 
 interface TableHeader {
@@ -55,6 +55,7 @@ export default function StockTable() {
         filterKeys={["company_name"]}
         type="STOCK"
         title="Stocks"
+        role="user"
       />
     </Box>
   );

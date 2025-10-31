@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import CarouselComponent from "./reusable/Carousel";
-import api from "../api/api";
-import DisplayCard from "./reusable/DisplayCard";
+import CarouselComponent from "../reusable/Carousel";
+import api from "../../api/api";
+import DisplayCard from "../reusable/DisplayCard";
 import { Box } from "@mui/material";
 
 export default function Feed() {

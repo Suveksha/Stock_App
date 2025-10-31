@@ -19,6 +19,8 @@ import {
   useTheme,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import AdminDialog from "./AdminDialog";
+import api from "../../api/api";
 
 type Order = "asc" | "desc";
 
@@ -36,7 +38,9 @@ interface MainTableProps {
   tableData: TableData[];
   filterKeys?: string[];
   type?: string;
-  title?: string;
+  title: string;
+  role: string;
+  admin_id?: string;
 }
 
 export default function MainTable({
@@ -45,6 +49,8 @@ export default function MainTable({
   type,
   filterKeys = [],
   title,
+  role,
+  admin_id,
 }: MainTableProps) {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>(tableHeaders[0]?.id || "");
@@ -54,9 +60,38 @@ export default function MainTable({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const navigate = useNavigate();
-
+  const [open, setOpen] = useState(false);
+  const [row, setRowData] = useState<any>({});
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const handleApprove = () => {
+    console.log("APPROVE", admin_id);
+    api
+      .post("/order/accept", {
+        order_id: row._id,
+        user_id: row.user_id,
+        admin_id,
+      })
+      .then((res: any) => {
+        console.log("Response", res.data);
+        setOpen(false);
+      });
+  };
+
+  const handleReject = () => {
+    console.log("REJECT");
+    api
+      .post("/order/reject", {
+        order_id: row._id,
+        user_id: row.user_id,
+        admin_id,
+      })
+      .then((res: any) => {
+        console.log("Response", res.data);
+        setOpen(false);
+      });
+  };
 
   // Sorting
   const handleSort = (property: string) => {
@@ -129,243 +164,268 @@ export default function MainTable({
   const formatLabel = (text: string) =>
     text.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
-  return (
-    <Paper
-      sx={{
-        padding: { xs: 1.5, sm: 3 },
-        borderRadius: 3,
-        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-        width: "100%",
-        overflowX: "auto",
-      }}
-    >
-      {/* Title */}
-      {title && (
-        <Typography
-          variant={isMobile ? "h6" : "h4"}
-          gutterBottom
-          align="center"
-          sx={{ fontWeight: 600, mb: 2 }}
-        >
-          {title}
-        </Typography>
-      )}
+  const changePage = (row: TableData) => {
+    if (role == "user" && type === "STOCK") navigate(`/stock/${row.symbol}`);
+    else if (role == "admin") {
+      if (type === "ORDER") {
+        setOpen(true);
+        setRowData(row);
+      }
+    }
+  };
 
-      {/* Filters */}
-      {/* Dynamic Filters */}
-      {filterKeys.length > 0 && (
-        <Box
-          display="flex"
-          flexWrap="wrap"
-          gap={isMobile ? 1.5 : 2}
-          mb={isMobile ? 1.5 : 3}
-          alignItems="center"
-          justifyContent={isMobile ? "center" : "flex-start"}
-          sx={{
-            width: "100%",
-            px: { xs: 1, sm: 2 },
-            overflowX: isMobile ? "auto" : "visible",
-          }}
-        >
-          {filterKeys.map((key) => (
-            <FormControl
-              key={key}
-              size="small"
-              sx={{
-                minWidth: isMobile ? "45%" : 180,
-                flex: isMobile ? "1 1 45%" : "unset",
-                "& .MuiInputLabel-root": {
-                  fontSize: "0.8rem",
-                  fontWeight: 500,
-                  color: "#6b7280",
-                },
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 2,
-                  fontSize: "0.8rem",
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "#16a34a",
-                },
-              }}
-            >
-              <InputLabel>{formatLabel(key)}</InputLabel>
-              <Select
-                value={filters[key] || ""}
-                onChange={(e) => handleFilterChange(key, e.target.value)}
-                label={formatLabel(key)}
+  return (
+    <>
+      <Paper
+        sx={{
+          padding: { xs: 1.5, sm: 3 },
+          borderRadius: 3,
+          boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+          width: "100%",
+          overflowX: "auto",
+        }}
+      >
+        {/* Title */}
+        {title && (
+          <Typography
+            variant={isMobile ? "h6" : "h4"}
+            gutterBottom
+            align="center"
+            sx={{ fontWeight: 600, mb: 2 }}
+          >
+            {title}
+          </Typography>
+        )}
+
+        {/* Filters */}
+        {/* Dynamic Filters */}
+        {filterKeys.length > 0 && (
+          <Box
+            display="flex"
+            flexWrap="wrap"
+            gap={isMobile ? 1.5 : 2}
+            mb={isMobile ? 1.5 : 3}
+            alignItems="center"
+            justifyContent={isMobile ? "center" : "flex-start"}
+            sx={{
+              width: "100%",
+              px: { xs: 1, sm: 2 },
+              overflowX: isMobile ? "auto" : "visible",
+            }}
+          >
+            {filterKeys.map((key) => (
+              <FormControl
+                key={key}
+                size="small"
                 sx={{
-                  "& .MuiSelect-select": {
+                  minWidth: isMobile ? "45%" : 180,
+                  flex: isMobile ? "1 1 45%" : "unset",
+                  "& .MuiInputLabel-root": {
                     fontSize: "0.8rem",
-                    color: "#06402B",
+                    fontWeight: 500,
+                    color: "#6b7280",
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                    fontSize: "0.8rem",
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "#16a34a",
                   },
                 }}
               >
-                <MenuItem value="">All</MenuItem>
-                {filterOptions[key].map((opt) => (
-                  <MenuItem key={opt} value={opt}>
-                    {opt}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          ))}
-
-          {/* Price Filters */}
-          {"current_price" in (tableData[0] || {}) && (
-            <Box
-              display="flex"
-              flexDirection={isMobile ? "row" : "row"}
-              flexWrap="wrap"
-              gap={isMobile ? 1 : 2}
-              justifyContent={isMobile ? "center" : "flex-start"}
-              width={isMobile ? "100%" : "auto"}
-            >
-              <TextField
-                label="Min"
-                type="number"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                size="small"
-                sx={{
-                  width: isMobile ? "45%" : 100,
-                  "& .MuiInputBase-input": { fontSize: "0.8rem",cursor:"pointer" },
-                   "& .MuiInputLabel-root.Mui-focused": {
-                  color: "#16a34a",
-                },
-                }}
-              />
-              <TextField
-                label="Max"
-                type="number"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                size="small"
-                sx={{
-                  width: isMobile ? "45%" : 100,
-                  "& .MuiInputBase-input": { fontSize: "0.8rem", cursor:"pointer" },
-                   "& .MuiInputLabel-root.Mui-focused": {
-                  color: "#16a34a",
-                },
-                }}
-              />
-            </Box>
-          )}
-        </Box>
-      )}
-
-      {/* Table */}
-      <Box
-        sx={{
-          maxHeight: { xs: 400, sm: 500, md: 600 },
-          overflowX: "auto",
-          overflowY: "auto",
-          borderRadius: 2,
-          "&::-webkit-scrollbar": {
-            height: 6,
-          },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#bdbdbd",
-            borderRadius: 3,
-          },
-        }}
-      >
-        {sortedData.length === 0 ? (
-          <Typography
-            variant="body1"
-            align="center"
-            color="text.secondary"
-            sx={{ py: 4 }}
-          >
-            No data found
-          </Typography>
-        ) : (
-          <Table stickyHeader size={isMobile ? "small" : "medium"}>
-            <TableHead>
-              <TableRow>
-                {tableHeaders.map((col) => (
-                  <TableCell
-                    key={col.id}
-                    sx={{
-                      color: "white",
-                      fontWeight: 600,
-                      backgroundColor: "#06402B",
-                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    <TableSortLabel
-                      active={orderBy === col.id}
-                      direction={orderBy === col.id ? order : "asc"}
-                      onClick={() => handleSort(col.id)}
-                      sx={{
-                        color: "white !important",
-                        "& .MuiTableSortLabel-icon": {
-                          color: "white !important",
-                        },
-                      }}
-                    >
-                      {col.label}
-                    </TableSortLabel>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {paginatedData.map((row, i) => (
-                <TableRow
-                  key={i}
+                <InputLabel>{formatLabel(key)}</InputLabel>
+                <Select
+                  value={filters[key] || ""}
+                  onChange={(e) => handleFilterChange(key, e.target.value)}
+                  label={formatLabel(key)}
                   sx={{
-                    backgroundColor: i % 2 === 0 ? "#f9f9f9" : "white",
-                    "&:hover": { backgroundColor: "#e9f5ef" },
-                    cursor: type === "STOCK" ? "pointer" : "default",
+                    "& .MuiSelect-select": {
+                      fontSize: "0.8rem",
+                      color: "#06402B",
+                    },
                   }}
-                  onClick={() =>
-                    type === "STOCK" && navigate(`/stock/${row.symbol}`)
-                  }
                 >
+                  <MenuItem value="">All</MenuItem>
+                  {filterOptions[key].map((opt) => (
+                    <MenuItem key={opt} value={opt}>
+                      {opt}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ))}
+
+            {/* Price Filters */}
+            {"current_price" in (tableData[0] || {}) && (
+              <Box
+                display="flex"
+                flexDirection={isMobile ? "row" : "row"}
+                flexWrap="wrap"
+                gap={isMobile ? 1 : 2}
+                justifyContent={isMobile ? "center" : "flex-start"}
+                width={isMobile ? "100%" : "auto"}
+              >
+                <TextField
+                  label="Min"
+                  type="number"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  size="small"
+                  sx={{
+                    width: isMobile ? "45%" : 100,
+                    "& .MuiInputBase-input": {
+                      fontSize: "0.8rem",
+                      cursor: "pointer",
+                    },
+                    "& .MuiInputLabel-root.Mui-focused": {
+                      color: "#16a34a",
+                    },
+                  }}
+                />
+                <TextField
+                  label="Max"
+                  type="number"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  size="small"
+                  sx={{
+                    width: isMobile ? "45%" : 100,
+                    "& .MuiInputBase-input": {
+                      fontSize: "0.8rem",
+                      cursor: "pointer",
+                    },
+                    "& .MuiInputLabel-root.Mui-focused": {
+                      color: "#16a34a",
+                    },
+                  }}
+                />
+              </Box>
+            )}
+          </Box>
+        )}
+
+        {/* Table */}
+        <Box
+          sx={{
+            maxHeight: { xs: 400, sm: 500, md: 600 },
+            overflowX: "auto",
+            overflowY: "auto",
+            borderRadius: 2,
+            "&::-webkit-scrollbar": {
+              height: 6,
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#bdbdbd",
+              borderRadius: 3,
+            },
+          }}
+        >
+          {sortedData.length === 0 ? (
+            <Typography
+              variant="body1"
+              align="center"
+              color="text.secondary"
+              sx={{ py: 4 }}
+            >
+              No data found
+            </Typography>
+          ) : (
+            <Table stickyHeader size={isMobile ? "small" : "medium"}>
+              <TableHead>
+                <TableRow>
                   {tableHeaders.map((col) => (
                     <TableCell
                       key={col.id}
                       sx={{
+                        color: "white",
+                        fontWeight: 600,
+                        backgroundColor: "#06402B",
                         fontSize: { xs: "0.75rem", sm: "0.875rem" },
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {col.id.toLowerCase().includes("date")
-                        ? new Date(row[col.id]).toLocaleString()
-                        : String(row[col.id] ?? "-")}
+                      <TableSortLabel
+                        active={orderBy === col.id}
+                        direction={orderBy === col.id ? order : "asc"}
+                        onClick={() => handleSort(col.id)}
+                        sx={{
+                          color: "white !important",
+                          "& .MuiTableSortLabel-icon": {
+                            color: "white !important",
+                          },
+                        }}
+                      >
+                        {col.label}
+                      </TableSortLabel>
                     </TableCell>
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </Box>
+              </TableHead>
 
-      {/* Pagination */}
-      <Box display="flex" justifyContent="center">
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}
-          component="div"
-          count={sortedData.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={(_, newPage) => setPage(newPage)}
-          onRowsPerPageChange={(e) => {
-            setRowsPerPage(parseInt(e.target.value, 10));
-            setPage(0);
-          }}
-          sx={{
-            "& .MuiTablePagination-toolbar": {
-              flexWrap: isMobile ? "wrap" : "nowrap",
-              justifyContent: "center",
-              fontSize: { xs: "0.75rem", sm: "0.875rem" },
-            },
-          }}
-        />
-      </Box>
-    </Paper>
+              <TableBody>
+                {paginatedData.map((row, i) => (
+                  <TableRow
+                    key={i}
+                    sx={{
+                      backgroundColor: i % 2 === 0 ? "#f9f9f9" : "white",
+                      "&:hover": { backgroundColor: "#e9f5ef" },
+                      cursor: type === "STOCK" ? "pointer" : "default",
+                    }}
+                    onClick={() => changePage(row)}
+                  >
+                    {tableHeaders.map((col) => (
+                      <TableCell
+                        key={col.id}
+                        sx={{
+                          fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {col.id.toLowerCase().includes("date")
+                          ? new Date(row[col.id]).toLocaleString()
+                          : String(row[col.id] ?? "-")}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </Box>
+
+        {/* Pagination */}
+        <Box display="flex" justifyContent="center">
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 20]}
+            component="div"
+            count={sortedData.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={(_, newPage) => setPage(newPage)}
+            onRowsPerPageChange={(e) => {
+              setRowsPerPage(parseInt(e.target.value, 10));
+              setPage(0);
+            }}
+            sx={{
+              "& .MuiTablePagination-toolbar": {
+                flexWrap: isMobile ? "wrap" : "nowrap",
+                justifyContent: "center",
+                fontSize: { xs: "0.75rem", sm: "0.875rem" },
+              },
+            }}
+          />
+        </Box>
+      </Paper>
+
+      <AdminDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        data={row}
+        title={title}
+      />
+    </>
   );
 }

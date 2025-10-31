@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children }: any) => {
     console.log("Protected Route", user);
   }, [user]);
 
-  if (!user) {
+  if (!user || user.role !== "user") {
     return <Navigate to="/login" replace />;
   }
 

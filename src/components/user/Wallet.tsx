@@ -8,10 +8,10 @@ import {
   useTheme,
 } from "@mui/material";
 import { useSelector } from "react-redux";
-import api from "../api/api";
-import WalletDialog from "./reusable/WalletDialog";
-import MainTable from "./reusable/MainTable";
+import api from "../../api/api";
+import MainTable from "../reusable/MainTable";
 import { motion } from "framer-motion";
+import MainDialog from "../reusable/MainDialog";
 
 interface Transaction {
   _id: string;
@@ -202,14 +202,36 @@ export default function Wallet() {
           tableData={transactions}
           tableHeaders={transactionHeaders}
           filterKeys={["mode", "type"]}
+          role={user.role}
+          title="Wallet Transactions"
         />
       </Box>
 
-      <WalletDialog
+      {/* <WalletDialog
         data={{ currentBalance, type }}
         open={open}
         onClose={() => setOpen(false)}
         onConfirm={({ amount, mode }) => {
+          const endpoint =
+            type === "add" ? "/user/add_balance" : "/user/withdraw";
+          api
+            .post(endpoint, { _id: user.id, amount, mode })
+            .then((res) => setCurrentBalance(res.data.balance))
+            .catch(console.error);
+        }}
+      /> */}
+
+      <MainDialog
+        data={{
+          currentAmount: currentBalance,
+          type: type === "add" ? "Add Balance" : "Withdraw Balance",
+          role: user.role,
+          fields: [{ key: "amount", label: "Amount" }],
+          modes: ["Cash", "UPI", "NetBanking", "Card"],
+        }}
+        open={open}
+        onClose={() => setOpen(false)}
+        onConfirm={({ amount, mode }: { amount: number; mode: string }) => {
           const endpoint =
             type === "add" ? "/user/add_balance" : "/user/withdraw";
           api

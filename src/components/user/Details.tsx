@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../api/api";
+import api from "../../api/api";
 import {
   LineChart,
   Line,
@@ -19,7 +19,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useSelector } from "react-redux";
-import OrderDialog from "./reusable/OrderDialog";
+import MainDialog from "../reusable/MainDialog";
 
 type Stock = {
   _id: string;
@@ -67,18 +67,12 @@ export default function StockDetails() {
       });
   }, [symbol]);
 
-  const createOrder = ({
-    quantity,
-    type,
-  }: {
-    quantity: number;
-    type: string;
-  }) => {
+  const createOrder = ({ amount, type }: { amount: number; type: string }) => {
     api.post("/order/create", {
       user_id: user.id,
       stock_id: stock?._id,
       type,
-      quantity,
+      quantity: amount,
       price_at_order: stock?.current_price,
     });
   };
@@ -225,7 +219,7 @@ export default function StockDetails() {
         </CardContent>
       </Card>
 
-      <OrderDialog
+      {/* <OrderDialog
         data={{
           currentPrice: stock.current_price,
           type,
@@ -233,6 +227,18 @@ export default function StockDetails() {
         open={open}
         onClose={() => setOpen(false)}
         onConfirm={createOrder}
+      /> */}
+
+      <MainDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onConfirm={createOrder}
+        data={{
+          type,
+          currentAmount: stock.current_price,
+          role: user.role,
+          fields: [{ key: "quantity", label: "Quantity" }],
+        }}
       />
     </div>
   );

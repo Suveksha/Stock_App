@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSocket } from "../context/SocketProvider";
+import { useSocket } from "../../context/SocketProvider";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 
@@ -18,34 +18,38 @@ const OrderNotification = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const getNotificationType = (status: string) => {
-    if(status==="SUCCESS")
-      return "success";
-    else if(status==="REJECTED")
-      return "error";
-    else 
-      return "info";
-  }
+    if (status === "SUCCESS") return "success";
+    else if (status === "REJECTED") return "error";
+    else return "info";
+  };
   useEffect(() => {
     if (!socket) return;
 
-    const handleOrderUpdate = (data: any) => {
+    const handleNewOrder = (data: any) => {
       console.log("NewOrder", data);
       setNotifications((prev) => [...prev, data]);
     };
 
-    const handleBalanceUpdate=(data:any)=>{
-      console.log("Balance Update Event",data)
-       setNotifications((prev) => [...prev, data]);
-    }
+    const handleOrderUpdate = (data: any) => {
+      console.log("Order Update Event", data);
+      setNotifications((prev) => [...prev, data]);
+    };
+
+    const handleBalanceUpdate = (data: any) => {
+      console.log("Balance Update Event", data);
+      setNotifications((prev) => [...prev, data]);
+    };
 
     // socket.on("orderStatusUpdate", handleOrderUpdate);
-    socket.on("new_order", handleOrderUpdate); 
+    socket.on("new_order", handleNewOrder);
+    socket.on("order_update", handleOrderUpdate);
     socket.on("wallet", handleBalanceUpdate);
 
     return () => {
       // socket.off("orderStatusUpdate", handleOrderUpdate);
       socket.off("new_order", handleOrderUpdate);
       socket.off("wallet", handleBalanceUpdate);
+      socket.off("order_update", handleOrderUpdate);
     };
   }, [socket]);
 
@@ -72,7 +76,7 @@ const OrderNotification = () => {
             severity={getNotificationType(notification.status)}
             sx={{ width: "100%", fontSize: "1rem" }}
           >
-            {notification.message }
+            {notification.message}
           </Alert>
         </Snackbar>
       ))}

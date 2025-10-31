@@ -7,11 +7,11 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import api from "../api/api";
+import api from "../../api/api";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { login } from "../store/authSlice";
-import "../css/Graph.css";
+import { login } from "../../store/authSlice";
+import "../../css/Graph.css";
 
 interface LoginDialogProps {
   open: boolean;
@@ -39,7 +39,15 @@ interface UserData {
 const LoginDialog: React.FC<LoginDialogProps> = ({ open, handleClose }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [user, setUser] = useState<UserData>();
+  const [user, setUser] = useState<UserData>({
+    email: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
+    balance: 0,
+    quantity: 0,
+    watchlist: [],
+  });
   const [isChecking, setIsChecking] = useState(false);
   const [userExist, setUserExist] = useState(false);
 
@@ -64,14 +72,21 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, handleClose }) => {
           if (data.password) {
             api.post("/user/login", data).then((res: any) => {
               if (res.status === 200) {
+                console.log("USER DISPATCH", res.data);
                 dispatch(login({ user: res.data.user }));
-                navigate("/feed");
+                navigate(
+                  res.data.user.role === "admin" ? "/admin/orders" : "/feed"
+                );
                 handleClose();
               }
             });
           }
         } else {
           setUserExist(false);
+          setUser((prev) => ({
+            ...prev,
+            email: data.email,
+          }));
           if (data.password) {
             api.post("/user/signup", data).then((res: any) => {
               if (res.status === 201) {
@@ -261,7 +276,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ open, handleClose }) => {
 
                 <TextField
                   id="email"
-                  value={user?.email || ""}
+                  value={user.email || ""}
                   disabled
                   label="Your Email Address"
                   variant="standard"
