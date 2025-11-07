@@ -15,6 +15,7 @@ import Wallet from "./components/user/Wallet";
 import Orders from "./components/user/Orders";
 import AdminProtectedRoute from "./components/admin/AdminProtectedRoute";
 import AdminOrders from "./components/admin/AdminOrders";
+import Portfolio from "./components/user/Portfolio";
 
 function App() {
   const dispatch = useDispatch();
@@ -76,7 +77,23 @@ function App() {
               }
             />
 
-            <Route path="/admin/orders" element={<AdminProtectedRoute><AdminOrders/></AdminProtectedRoute>} />
+            <Route
+              path="/user/portfolio"
+              element={
+                <ProtectedRoute>
+                  <Portfolio />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/orders"
+              element={
+                <AdminProtectedRoute>
+                  <AdminOrders />
+                </AdminProtectedRoute>
+              }
+            />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

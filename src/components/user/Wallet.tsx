@@ -99,7 +99,7 @@ export default function Wallet() {
                 fontWeight={700}
                 sx={{ mt: 0.5 }}
               >
-                ₹ {currentBalance?.toLocaleString() ?? 0}
+                ₹ {currentBalance?.toLocaleString("en-IN") ?? 0}
               </Typography>
             </Box>
             <Box
@@ -206,20 +206,6 @@ export default function Wallet() {
           title="Wallet Transactions"
         />
       </Box>
-
-      {/* <WalletDialog
-        data={{ currentBalance, type }}
-        open={open}
-        onClose={() => setOpen(false)}
-        onConfirm={({ amount, mode }) => {
-          const endpoint =
-            type === "add" ? "/user/add_balance" : "/user/withdraw";
-          api
-            .post(endpoint, { _id: user.id, amount, mode })
-            .then((res) => setCurrentBalance(res.data.balance))
-            .catch(console.error);
-        }}
-      /> */}
 
       <MainDialog
         data={{

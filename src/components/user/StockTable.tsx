@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../api/api";
 import MainTable from "../reusable/MainTable";
 import { Box, CircularProgress } from "@mui/material";
+import { useSelector } from "react-redux";
 
 interface TableHeader {
   id: string;
@@ -14,7 +15,7 @@ export default function StockTable() {
     { id: "current_price", label: "Current Price (₹)" },
     { id: "percent_change", label: "% Change" },
   ];
-
+  const user = useSelector((state: any) => state.auth.user);
   const [stocksData, setStocksData] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -55,7 +56,8 @@ export default function StockTable() {
         filterKeys={["company_name"]}
         type="STOCK"
         title="Stocks"
-        role="user"
+        role={user.role}
+        minmax={true}
       />
     </Box>
   );

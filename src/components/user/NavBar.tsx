@@ -26,6 +26,7 @@ export default function NavBar() {
     { label: "Stocks", path: "/stock/all" },
     { label: "Wallet", path: "/user/wallet" },
     { label: "Orders", path: "/user/orders" },
+    { label: "Portfolio", path: "/user/portfolio" },
   ];
 
   const adminNavItems = [{ label: "Orders", path: "/admin/orders" }];

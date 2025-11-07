@@ -41,6 +41,7 @@ interface MainTableProps {
   title: string;
   role: string;
   admin_id?: string;
+  minmax?: boolean;
 }
 
 export default function MainTable({
@@ -51,6 +52,7 @@ export default function MainTable({
   title,
   role,
   admin_id,
+  minmax,
 }: MainTableProps) {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>(tableHeaders[0]?.id || "");
@@ -257,7 +259,7 @@ export default function MainTable({
             ))}
 
             {/* Price Filters */}
-            {"current_price" in (tableData[0] || {}) && (
+            {minmax && (
               <Box
                 display="flex"
                 flexDirection={isMobile ? "row" : "row"}
@@ -384,6 +386,8 @@ export default function MainTable({
                       >
                         {col.id.toLowerCase().includes("date")
                           ? new Date(row[col.id]).toLocaleString()
+                          : typeof row[col.id] == "number"
+                          ? row[col.id].toFixed(2)
                           : String(row[col.id] ?? "-")}
                       </TableCell>
                     ))}
