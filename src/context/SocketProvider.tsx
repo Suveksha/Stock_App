@@ -13,7 +13,11 @@ export default function SocketProvider({
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket: Socket = io("/socket");
+    const newSocket = io("http://13.62.179.226", {
+      path: "/socket.io",
+      transports: ["websocket", "polling"],
+    });
+
     setSocket(newSocket);
 
     if (userId) {
